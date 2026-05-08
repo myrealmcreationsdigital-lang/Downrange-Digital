@@ -8,10 +8,7 @@
   "orientation": "portrait",
   "background_color": "#0c0e15",
   "theme_color": "#0f1117",
-  "categories": [
-    "sports",
-    "utilities"
-  ],
+  "categories": ["sports", "utilities"],
   "lang": "en-US",
   "icons": [
     {
@@ -33,12 +30,7 @@
       "short_name": "New Match",
       "description": "Start a fresh match",
       "url": "./?action=new",
-      "icons": [
-        {
-          "src": "icon-192.png",
-          "sizes": "192x192"
-        }
-      ]
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
     }
   ]
 }
