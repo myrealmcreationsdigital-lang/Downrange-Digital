@@ -1,0 +1,68 @@
+{
+  "name": "Downrange Digital",
+  "short_name": "Downrange",
+  "description": "Shooting Sports Match Scorer — Solo, Head-to-Head, and Team run formats with factory presets for Steel Challenge, USPSA, IDPA, and more.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0c0e15",
+  "theme_color": "#0f1117",
+  "categories": ["sports", "utilities"],
+  "lang": "en-US",
+
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+
+  "screenshots": [
+    {
+      "src": "screenshot-shooters.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Shooters — Add competitors by name"
+    },
+    {
+      "src": "screenshot-scoring.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Live Scoring — Hit and Miss tracking with timer"
+    },
+    {
+      "src": "screenshot-leaderboard.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Leaderboard — Final standings"
+    }
+  ],
+
+  "shortcuts": [
+    {
+      "name": "New Match",
+      "short_name": "New Match",
+      "description": "Start a fresh match",
+      "url": "./?action=new",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
