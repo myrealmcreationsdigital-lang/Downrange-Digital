@@ -2262,7 +2262,7 @@ function stSetPhase(phase,runId,shooterId){
     if(status)status.className='shot-timer-status done';
     if(readyBtn)readyBtn.style.display='';
     if(stopBtn)stopBtn.style.display='none';
-    if(recBtn)recBtn.style.display='';
+    if(recBtn)recBtn.style.display=(S.cfg.zoneMode?'none':'');
     stSetGate(tid,false);  // keep unlocked after run
   }
   stSyncLivePanel(runId,shooterId);
