@@ -3053,7 +3053,12 @@ function _zeRender(){
         +'</button>';}).join('');}
   var undoEl=document.getElementById('ze-undo');
   if(undoEl)undoEl.disabled=(_ZE.scratch[_ZE.tgtIdx].length===0&&_ZE.tgtIdx===0);
-  var saveEl=document.getElementById('ze-save');if(saveEl)saveEl.style.display=allDone?'':'none';
+  var saveEl=document.getElementById('ze-save');
+  if(saveEl){
+    saveEl.style.display='';
+    saveEl.textContent=allDone?'✓ Done — Save':'Save (partial)';
+    saveEl.style.opacity=allDone?'1':'0.55';
+  }
 }
 
 function zeAdd(zKey){
@@ -3644,7 +3649,7 @@ if(document.readyState==='loading'){
   <div class="ze-grid" id="ze-grid"></div>
   <div class="ze-foot">
     <button class="ze-undo" id="ze-undo" onclick="zeUndo()">&#8617; Undo</button>
-    <button class="ze-save" id="ze-save" onclick="zeSave()" style="display:none">&#10003; Save Scores</button>
+    <button class="ze-save" id="ze-save" onclick="zeSave()">Save (partial)</button>
   </div>
 </div>
 
