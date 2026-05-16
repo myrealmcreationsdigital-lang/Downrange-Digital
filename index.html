@@ -831,6 +831,7 @@ body.light #install-splash{background:#0c0e15;background-image:radial-gradient(c
 .ze-shot-ctr{font-family:var(--fh);font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.05em;}
 .ze-badges{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end;}
 .ze-badge{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:6px;font-family:var(--fh);font-size:13px;font-weight:800;color:#fff;letter-spacing:0;}
+.ze-badge-empty{background:transparent;border:2px dashed rgba(255,255,255,.25);}
 .ze-close{background:none;border:none;color:var(--muted);font-size:24px;cursor:pointer;padding:0 0 0 6px;line-height:1;-webkit-tap-highlight-color:transparent;flex-shrink:0;}
 .ze-progress{display:flex;gap:6px;justify-content:center;padding:10px 0 4px;flex-shrink:0;}
 .ze-prog-dot{width:9px;height:9px;border-radius:50%;background:var(--border);transition:background .2s;}
@@ -3034,9 +3035,13 @@ function _zeRender(){
   var subEl=document.getElementById('ze-tgt-sub');if(subEl)subEl.textContent='Target '+(_ZE.tgtIdx+1)+' of '+cfg.targets.length;
   var ctrEl=document.getElementById('ze-shot-ctr');if(ctrEl)ctrEl.textContent='Shot '+(shotsDone+1)+' of '+shotsNeeded;
   var badgeEl=document.getElementById('ze-badges');
-  if(badgeEl)badgeEl.innerHTML=_ZE.scratch[_ZE.tgtIdx].map(function(k){
-    var z=cfg.zoneDef&&cfg.zoneDef.find(function(zd){return zd.key===k;});var col=z?z.color:'#555';
-    return'<span class="ze-badge" style="background:'+col+'">'+k+'</span>';}).join('');
+  if(badgeEl){
+    var filled=_ZE.scratch[_ZE.tgtIdx].map(function(k){
+      var z=cfg.zoneDef&&cfg.zoneDef.find(function(zd){return zd.key===k;});var col=z?z.color:'#555';
+      return'<span class="ze-badge" style="background:'+col+'">'+k+'</span>';});
+    var empty=[];for(var s=filled.length;s<shotsNeeded;s++)empty.push('<span class="ze-badge ze-badge-empty"></span>');
+    badgeEl.innerHTML=filled.join('')+empty.join('');
+  }
   var progEl=document.getElementById('ze-progress');
   if(progEl)progEl.innerHTML=cfg.targets.map(function(t,i){
     var done=_ZE.scratch[i].length>=(t.shots||1);var active=i===_ZE.tgtIdx;
@@ -3077,11 +3082,18 @@ function zeUndo(){
 }
 
 function zeSave(){
+  var cfg=S.cfg;
+  var totalNeeded=cfg.targets.reduce(function(s,t){return s+(t.shots||1);},0);
+  var totalEntered=_ZE.scratch.reduce(function(s,a){return s+a.length;},0);
+  if(totalEntered<totalNeeded){
+    var missing=totalNeeded-totalEntered;
+    if(!confirm('Only '+totalEntered+' of '+totalNeeded+' shots scored ('+(missing)+' missing).\n\nSave partial scores anyway?'))return;
+  }
   var run=S.runs.find(function(r){return r.id===_ZE.runId;});if(!run)return;
   if(!run.scores[_ZE.shooterId])run.scores[_ZE.shooterId]=blankSc();
   var sc=run.scores[_ZE.shooterId];
   sc.zones=_ZE.scratch.map(function(s){return s.slice();});
-  S.cfg.targets.forEach(function(_,i){sc.hits[i]=sc.zones[i].length;});
+  cfg.targets.forEach(function(_,i){sc.hits[i]=sc.zones[i].length;});
   persist();zeClose();refreshCard(_ZE.runId,_ZE.shooterId);toast('Zones saved!');
 }
 
