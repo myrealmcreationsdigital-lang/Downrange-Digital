@@ -809,6 +809,8 @@ body.light #install-splash{background:#0c0e15;background-image:radial-gradient(c
 .prog-stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin-bottom:8px;}
 .prog-stat{background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:9px 11px;text-align:center;}
 .prog-stat-val{font-family:var(--fh);font-size:22px;font-weight:800;color:var(--accent);}
+.prog-time-stats{border-top:1px solid var(--border);padding-top:8px;margin-top:4px;}
+.prog-time-val{color:#38bdf8;}
 .prog-stat-lbl{font-family:var(--fh);font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:2px;}
 .prog-best-match{font-size:11px;color:var(--muted);margin-top:4px;}
 
@@ -3359,9 +3361,13 @@ function renderProgress(){
   var shooterMap={};
   list.forEach(function(rec){
     (rec.leaderboard||[]).forEach(function(r){
-      if(!shooterMap[r.name])shooterMap[r.name]={name:r.name,scores:[],bestScore:0,totalRuns:0,matches:0};
+      if(!shooterMap[r.name])shooterMap[r.name]={name:r.name,scores:[],times:[],bestScore:0,bestTime:0,totalRuns:0,matches:0};
       shooterMap[r.name].scores.push(r.bestScore);
       if(r.bestScore>shooterMap[r.name].bestScore)shooterMap[r.name].bestScore=r.bestScore;
+      if(r.time&&r.time>0){
+        shooterMap[r.name].times.push(r.time);
+        if(!shooterMap[r.name].bestTime||r.time<shooterMap[r.name].bestTime)shooterMap[r.name].bestTime=r.time;
+      }
       shooterMap[r.name].totalRuns+=r.runs;
       shooterMap[r.name].matches++;
     });
@@ -3373,7 +3379,19 @@ function renderProgress(){
   }
   el.innerHTML=shooters.map(function(sh){
     var avg=sh.scores.length?Math.round(sh.scores.reduce(function(a,b){return a+b;},0)/sh.scores.length):0;
-    var trend=sh.scores.length>=2?(sh.scores[0]>sh.scores[sh.scores.length-1]?'\u2197 Improving':sh.scores[0]<sh.scores[sh.scores.length-1]?'\u2198 Declining':'\u2192 Steady'):'—';
+    var scoreTrend=sh.scores.length>=2?(sh.scores[0]>sh.scores[sh.scores.length-1]?'↗ Improving':sh.scores[0]<sh.scores[sh.scores.length-1]?'↘ Declining':'→ Steady'):'—';
+    var hasTimes=sh.times.length>0;
+    var avgTime=hasTimes?(sh.times.reduce(function(a,b){return a+b;},0)/sh.times.length).toFixed(2):null;
+    var timeTrend=sh.times.length>=2?(sh.times[0]<sh.times[sh.times.length-1]?'↗ Faster':sh.times[0]>sh.times[sh.times.length-1]?'↘ Slower':'→ Steady'):'—';
+    var timeSection=hasTimes
+      ?'<div class="prog-stats prog-time-stats">'
+        +'<div class="prog-stat"><div class="prog-stat-val prog-time-val">'+sh.bestTime.toFixed(2)+'s</div><div class="prog-stat-lbl">Best Time</div></div>'
+        +'<div class="prog-stat"><div class="prog-stat-val prog-time-val">'+avgTime+'s</div><div class="prog-stat-lbl">Avg Time</div></div>'
+        +'<div class="prog-stat"><div class="prog-stat-val prog-time-val">'+sh.times.length+'</div><div class="prog-stat-lbl">Timed Runs</div></div>'
+        +'<div class="prog-stat"><div class="prog-stat-val" style="font-size:13px;">'+timeTrend+'</div><div class="prog-stat-lbl">Time Trend</div></div>'
+        +'</div>'
+        +'<div class="prog-best-match">Times (newest → oldest): ['+sh.times.slice(0,6).map(function(t){return t.toFixed(2)+'s';}).join(', ')+(sh.times.length>6?', …':'')+']</div>'
+      :'';
     return'<div class="prog-shooter-card">'
       +'<div class="prog-shooter-name">'+esc(sh.name)+'</div>'
       +'<div class="prog-stats">'
@@ -3382,7 +3400,8 @@ function renderProgress(){
       +'<div class="prog-stat"><div class="prog-stat-val">'+sh.matches+'</div><div class="prog-stat-lbl">Matches</div></div>'
       +'<div class="prog-stat"><div class="prog-stat-val">'+sh.totalRuns+'</div><div class="prog-stat-lbl">Total Runs</div></div>'
       +'</div>'
-      +'<div class="prog-best-match">Trend (newest \u2192 oldest): '+trend+' &nbsp;|&nbsp; Scores: ['+sh.scores.slice(0,5).join(', ')+(sh.scores.length>5?', \u2026':'')+']</div>'
+      +'<div class="prog-best-match">Score trend (newest → oldest): '+scoreTrend+' &nbsp;|  ['+sh.scores.slice(0,5).join(', ')+(sh.scores.length>5?', …':'')+']</div>'
+      +timeSection
       +'</div>';
   }).join('');
 }
