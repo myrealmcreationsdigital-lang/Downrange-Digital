@@ -2395,6 +2395,12 @@ function stStop(runId,shooterId){
   stSetPhase('done',runId,shooterId);
   var tid=runId+'_'+shooterId;
   var statusEl=document.getElementById('sht-status-'+tid);
+  // Zone-mode: auto-save time and open zone entry immediately
+  if(S.cfg.zoneMode){
+    stAutoRecord(runId,shooterId);
+    setTimeout(function(){openZoneEntry(runId,shooterId);},250);
+    return;
+  }
   if(statusEl)statusEl.textContent=(_ST.shots.length>0?_ST.shots.length+' shot'+(_ST.shots.length!==1?'s':'')+' detected \u2014 ':'')+'Tap SAVE TIME';
   stRenderClock(runId,shooterId);
 }
@@ -2403,6 +2409,7 @@ function stFinalize(runId,shooterId){
   if(_ST.raf){cancelAnimationFrame(_ST.raf);_ST.raf=null;}
   if(_ST.micRafId){cancelAnimationFrame(_ST.micRafId);_ST.micRafId=null;}
   stAutoRecord(runId,shooterId);
+  if(S.cfg.zoneMode){setTimeout(function(){openZoneEntry(runId,shooterId);},250);}
 }
 
 function stReset(runId,shooterId){
