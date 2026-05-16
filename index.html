@@ -819,6 +819,42 @@ body.light #install-splash{background:#0c0e15;background-image:radial-gradient(c
 
 /* ── PRO STATUS CHIP in header ── */
 .hdr-pro-chip{font-family:var(--fh);font-size:9px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;background:linear-gradient(135deg,#c8a020,#e8d060);color:#111;border-radius:4px;padding:2px 7px;margin-left:8px;cursor:default;}
+
+/* ── ZONE ENTRY OVERLAY ─────────────────────────────── */
+#zone-entry-overlay{position:fixed;inset:0;z-index:9500;background:#0c0e15;flex-direction:column;display:none;}
+#zone-entry-overlay.open{display:flex;}
+.ze-hdr{background:linear-gradient(135deg,#07090f,#0e1220);border-bottom:2px solid var(--accent);padding:16px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-shrink:0;}
+.ze-hdr-left{display:flex;flex-direction:column;gap:3px;}
+.ze-tgt-name{font-family:var(--fh);font-size:30px;font-weight:800;color:var(--text);line-height:1;}
+.ze-tgt-sub{font-size:11px;color:var(--muted);font-family:var(--fh);letter-spacing:.1em;text-transform:uppercase;}
+.ze-hdr-right{text-align:right;display:flex;flex-direction:column;gap:5px;align-items:flex-end;}
+.ze-shot-ctr{font-family:var(--fh);font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.05em;}
+.ze-badges{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end;}
+.ze-badge{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:6px;font-family:var(--fh);font-size:13px;font-weight:800;color:#fff;letter-spacing:0;}
+.ze-close{background:none;border:none;color:var(--muted);font-size:24px;cursor:pointer;padding:0 0 0 6px;line-height:1;-webkit-tap-highlight-color:transparent;flex-shrink:0;}
+.ze-progress{display:flex;gap:6px;justify-content:center;padding:10px 0 4px;flex-shrink:0;}
+.ze-prog-dot{width:9px;height:9px;border-radius:50%;background:var(--border);transition:background .2s;}
+.ze-prog-dot.done{background:var(--green);}
+.ze-prog-dot.active{background:var(--accent);}
+.ze-grid{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:16px;}
+.ze-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;border:none;border-radius:18px;cursor:pointer;-webkit-tap-highlight-color:transparent;gap:6px;transition:transform .07s,filter .07s;touch-action:manipulation;}
+.ze-btn:active{transform:scale(.91);filter:brightness(1.15);}
+.ze-btn-key{font-family:var(--fh);font-size:48px;font-weight:900;color:#fff;line-height:1;}
+.ze-btn-name{font-family:var(--fh);font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.75);}
+.ze-btn-pts{font-family:var(--fh);font-size:15px;font-weight:700;color:rgba(255,255,255,.9);}
+.ze-foot{padding:14px 16px;display:flex;gap:10px;border-top:1px solid rgba(255,255,255,.06);flex-shrink:0;}
+.ze-undo{flex:1;padding:15px;background:#1a1f2e;border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:var(--fh);font-size:15px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+.ze-undo:disabled{opacity:.35;}
+.ze-save{flex:1;padding:15px;background:var(--accent);border:none;border-radius:10px;color:#111;font-family:var(--fh);font-size:15px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+/* Zone summary in score card */
+.zone-sum{display:flex;flex-direction:column;gap:7px;padding:10px 0 2px;}
+.zone-sum-row{display:flex;align-items:center;gap:8px;}
+.zone-sum-lbl{font-family:var(--fh);font-size:11px;font-weight:700;color:var(--muted);min-width:34px;flex-shrink:0;text-transform:uppercase;}
+.zone-sum-shots{display:flex;gap:4px;flex:1;flex-wrap:wrap;}
+.zone-sum-empty{font-size:12px;color:var(--border);font-style:italic;}
+.zone-sum-pts{font-family:var(--fh);font-size:12px;font-weight:700;margin-left:auto;flex-shrink:0;}
+.zone-score-btn{width:100%;padding:14px;background:linear-gradient(135deg,rgba(232,160,32,.13),rgba(232,160,32,.06));border:2px solid var(--accent);border-radius:10px;color:var(--accent);font-family:var(--fh);font-size:15px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;-webkit-tap-highlight-color:transparent;margin-top:12px;touch-action:manipulation;}
+.zone-score-btn:active{transform:scale(.97);}
 </style>
 </head>
 <body>
@@ -1330,7 +1366,7 @@ var _BULLSEYE = function(sz){sz=sz||38;return '<svg xmlns="http://www.w3.org/200
   +'</svg>';};
 
 // STATE
-function defCfg(){return{matchname:'',targets:[{label:'T1',pts:5}],advance:1,maxhits:0,timelimiton:false,misspenalty:false,missval:0,timelimit:60,timebonus:false,bonusthresh:0,bonusper:0,bonusmax:0,timepenalty:false,penthresh:0,penper:0,simultaneous:false,mustfinish:false,haptic:true};}
+function defCfg(){return{matchname:'',targets:[{label:'T1',pts:5}],advance:1,maxhits:0,timelimiton:false,misspenalty:false,missval:0,timelimit:60,timebonus:false,bonusthresh:0,bonusper:0,bonusmax:0,timepenalty:false,penthresh:0,penper:0,simultaneous:false,mustfinish:false,haptic:true,zoneMode:false,zoneDef:[]};}
 function defState(){return{shooters:[],runs:[],presets:[],cfg:defCfg(),locked:false};}
 var S=(function(){try{var d=JSON.parse(localStorage.getItem('rpc_dd2'));return(d&&d.shooters)?d:defState();}catch(e){return defState();}})();
 var _pendingPresetId=null,_pendingDeletePresetId=null,_pendingDeleteRunId=null,_pickerSel=[];
@@ -1342,6 +1378,7 @@ function persist(){try{localStorage.setItem('rpc_dd2',JSON.stringify(S));}catch(
 function calcScore(sc){
   var cfg=S.cfg;
   if(!sc)return{total:0,tPts:cfg.targets.map(function(){return 0;}),timeMod:0,dnf:false};
+  if(cfg.zoneMode&&sc.zones){var tPts=cfg.targets.map(function(tgt,i){var shots=sc.zones[i]||[];return shots.reduce(function(sum,k){var z=cfg.zoneDef&&cfg.zoneDef.find(function(zd){return zd.key===k;});return sum+(z?z.pts:0);},0);});var total=tPts.reduce(function(a,b){return a+b;},0);var t=sc.time||0,timeMod=0;if(cfg.timelimiton){if(cfg.timebonus&&t>0&&t<cfg.bonusthresh)timeMod+=Math.min(cfg.bonusmax,Math.floor((cfg.bonusthresh-t)/5)*cfg.bonusper);if(cfg.timepenalty&&t>cfg.penthresh)timeMod-=Math.floor((t-cfg.penthresh)/5)*cfg.penper;}return{total:total+timeMod,tPts:tPts,timeMod:timeMod,dnf:false};}
   var tPts=cfg.targets.map(function(tgt,i){var h=sc.hits[i]||0,m=sc.misses[i]||0;if(cfg.maxhits>0)h=Math.min(h,cfg.maxhits);var pts=h*tgt.pts;if(cfg.misspenalty)pts-=m*cfg.missval;return pts;});
   var dnf=cfg.mustfinish&&!scReachedLast(sc);
   if(dnf)tPts=tPts.map(function(){return 0;});
@@ -1359,7 +1396,7 @@ function currentTgtIdx(sc){var n=S.cfg.targets.length;for(var i=0;i<n;i++)if((sc
 function isComplete(sc){var n=S.cfg.targets.length;return(sc.hits[n-1]||0)>=S.cfg.advance;}
 function bestRun(sid){var best=null;S.runs.forEach(function(r){var idx=r.shooterIds.indexOf(sid);if(idx===-1)return;var sc=r.scores[sid];if(!sc)return;var res=calcScore(sc);if(best===null||res.total>best.total)best={total:res.total,run:r,sc:sc};});return best;}
 function runCount(id){return S.runs.filter(function(r){return r.shooterIds.indexOf(id)!==-1;}).length;}
-function blankSc(){var n=S.cfg.targets.length;return{hits:new Array(n).fill(0),misses:new Array(n).fill(0),time:0};}
+function blankSc(){var n=S.cfg.targets.length;var sc={hits:new Array(n).fill(0),misses:new Array(n).fill(0),time:0};if(S.cfg.zoneMode)sc.zones=S.cfg.targets.map(function(){return[];});return sc;}
 function haptic(type){if(!S.cfg.haptic||!navigator.vibrate)return;if(type==='hit')navigator.vibrate(30);else if(type==='miss')navigator.vibrate([20,30,20]);else if(type==='advance')navigator.vibrate([40,30,40,30,80]);else if(type==='complete')navigator.vibrate([80,40,80]);}
 
 // TABS
@@ -1524,6 +1561,56 @@ var FACTORY_PRESETS=[
     desc:'Club-level standard course. 6 targets, one hit each, engage in order. Time is the tiebreaker — clean runs under par time earn a bonus. Heavy miss penalty keeps accuracy honest.',
     cfg:{matchname:'Standards Stage',targets:[{label:'T1',pts:10},{label:'T2',pts:10},{label:'T3',pts:10},{label:'T4',pts:10},{label:'T5',pts:10},{label:'T6',pts:10}],advance:1,maxhits:1,timelimiton:true,timelimit:20,misspenalty:true,missval:10,timebonus:true,bonusthresh:12,bonusper:4,bonusmax:20,timepenalty:true,penthresh:20,penper:5,simultaneous:false,mustfinish:true,haptic:true}
   }
+  ,{
+    id:'fp_bill_drill',name:'Bill Drill',division:'pistol',
+    desc:'6 rounds on 1 USPSA target at 7 yards from the holster. The gold-standard speed-accuracy test — a clean run of 6 alphas beats a fast but sloppy one every time. Popularized by Bill Wilson.',
+    cfg:{matchname:'Bill Drill',zoneMode:true,zoneDef:[{key:"A",label:"Alpha",pts:5,color:"#22c55e"},{key:"C",label:"Charlie",pts:3,color:"#f59e0b"},{key:"D",label:"Delta",pts:1,color:"#ef4444"},{key:"M",label:"Miss",pts:-10,color:"#4b5563"}],
+      targets:[{label:'T1',pts:5,shots:6}],
+      advance:1,maxhits:0,timelimiton:true,timelimit:10,misspenalty:false,missval:0,
+      timebonus:false,bonusthresh:0,bonusper:0,bonusmax:0,timepenalty:false,penthresh:0,penper:0,
+      simultaneous:false,mustfinish:false,haptic:true}
+  },{
+    id:'fp_fast_drill',name:'F.A.S.T. Drill',division:'pistol',
+    desc:'Fundamentals, Accuracy & Speed Test. 2 shots to a 3×5 head box, 4 shots to an 8" body circle at 7 yards. Sub-5s is competitive. Designed by Todd Louis Green.',
+    cfg:{matchname:'FAST Drill',zoneMode:true,zoneDef:[{key:"A",label:"Alpha",pts:5,color:"#22c55e"},{key:"C",label:"Charlie",pts:3,color:"#f59e0b"},{key:"D",label:"Delta",pts:1,color:"#ef4444"},{key:"M",label:"Miss",pts:-10,color:"#4b5563"}],
+      targets:[{label:'Head',pts:5,shots:2},{label:'Body',pts:5,shots:4}],
+      advance:1,maxhits:0,timelimiton:true,timelimit:15,misspenalty:false,missval:0,
+      timebonus:false,bonusthresh:0,bonusper:0,bonusmax:0,timepenalty:false,penthresh:0,penper:0,
+      simultaneous:false,mustfinish:false,haptic:true}
+  },{
+    id:'fp_smoke_hope',name:'Smoke & Hope',division:'pistol',
+    desc:'5 rounds on 1 USPSA target at max sustainable speed. No strategy — just go. Exposes spraying tendencies. Great for tracking split times and muzzle discipline under full throttle.',
+    cfg:{matchname:'Smoke & Hope',zoneMode:true,zoneDef:[{key:"A",label:"Alpha",pts:5,color:"#22c55e"},{key:"C",label:"Charlie",pts:3,color:"#f59e0b"},{key:"D",label:"Delta",pts:1,color:"#ef4444"},{key:"M",label:"Miss",pts:-10,color:"#4b5563"}],
+      targets:[{label:'T1',pts:5,shots:5}],
+      advance:1,maxhits:0,timelimiton:true,timelimit:8,misspenalty:false,missval:0,
+      timebonus:false,bonusthresh:0,bonusper:0,bonusmax:0,timepenalty:false,penthresh:0,penper:0,
+      simultaneous:false,mustfinish:false,haptic:true}
+  },{
+    id:'fp_rhythm_drill',name:'Rhythm Drill',division:'both',
+    desc:'6 rounds on 1 target with deliberate, even cadence. Goal is consistent split times — not raw speed. Exposes trigger control issues that speed-focused drills hide.',
+    cfg:{matchname:'Rhythm Drill',zoneMode:true,zoneDef:[{key:"A",label:"Alpha",pts:5,color:"#22c55e"},{key:"C",label:"Charlie",pts:3,color:"#f59e0b"},{key:"D",label:"Delta",pts:1,color:"#ef4444"},{key:"M",label:"Miss",pts:-10,color:"#4b5563"}],
+      targets:[{label:'T1',pts:5,shots:6}],
+      advance:1,maxhits:0,timelimiton:true,timelimit:12,misspenalty:false,missval:0,
+      timebonus:false,bonusthresh:0,bonusper:0,bonusmax:0,timepenalty:false,penthresh:0,penper:0,
+      simultaneous:false,mustfinish:false,haptic:true}
+  },{
+    id:'fp_1r1',name:'1-Reload-1',division:'pistol',
+    desc:'Draw, 1 shot on T1, perform a slide-lock reload, 1 shot on T2. Isolates the reload under time pressure. Sub-4s is strong — the reload is the variable.',
+    cfg:{matchname:'1-Reload-1',zoneMode:true,zoneDef:[{key:"A",label:"Alpha",pts:5,color:"#22c55e"},{key:"C",label:"Charlie",pts:3,color:"#f59e0b"},{key:"D",label:"Delta",pts:1,color:"#ef4444"},{key:"M",label:"Miss",pts:-10,color:"#4b5563"}],
+      targets:[{label:'T1',pts:5,shots:1},{label:'T2',pts:5,shots:1}],
+      advance:1,maxhits:0,timelimiton:true,timelimit:10,misspenalty:false,missval:0,
+      timebonus:false,bonusthresh:0,bonusper:0,bonusmax:0,timepenalty:false,penthresh:0,penper:0,
+      simultaneous:false,mustfinish:false,haptic:true}
+  },{
+    id:'fp_dot_torture',name:'Dot Torture',division:'pistol',
+    desc:'50 rounds across 10 small dots — each tests a different skill: draw, strong hand, weak hand, reload. Score is total hits out of 50. Perfect for dry-fire to live-fire progression.',
+    cfg:{matchname:'Dot Torture',
+      targets:[{label:'D1',pts:1},{label:'D2',pts:1},{label:'D3',pts:1},{label:'D4',pts:1},{label:'D5',pts:1},
+               {label:'D6',pts:1},{label:'D7',pts:1},{label:'D8',pts:1},{label:'D9',pts:1},{label:'D10',pts:1}],
+      advance:1,maxhits:5,timelimiton:false,timelimit:0,misspenalty:false,missval:0,
+      timebonus:false,bonusthresh:0,bonusper:0,bonusmax:0,timepenalty:false,penthresh:0,penper:0,
+      simultaneous:false,mustfinish:false,haptic:true}
+  }
 ];
 
 function renderFactoryPresets(){
@@ -1540,9 +1627,9 @@ function renderFactoryPresets(){
       +'<div class="fp-desc">'+esc(p.desc)+'</div>'
       +'<div class="fp-stats">'
       +'<div class="fp-stat">Targets: <span>'+tgts+'</span></div>'
-      +'<div class="fp-stat">Advance: <span>'+adv+'</span></div>'
-      +'<div class="fp-stat">Time: <span>'+tl+'</span></div>'
-      +'<div class="fp-stat">Miss: <span>'+miss+'</span></div>'
+      +(p.cfg.zoneMode?'<div class="fp-stat">Shots: <span>'+totalShots+'</span></div>':'<div class="fp-stat">Advance: <span>'+adv+'</span></div>')
+      +'<div class="fp-stat">Par: <span>'+tl+'</span></div>'
+      +(p.cfg.zoneMode?'<div class="fp-stat">Zones: <span>A / C / D / Miss</span></div>':'<div class="fp-stat">Miss: <span>'+miss+'</span></div>')
       +'</div>'
       +'<div class="fp-actions">'
       +'<button class="btn btn-primary btn-sm" onclick="loadFactoryPreset(\''+p.id+'\')">Load</button>'
@@ -1768,7 +1855,7 @@ function toggleScoreRun(runId){
   if(open){stStopAll();var body=document.getElementById('scb-'+runId);var run=S.runs.find(function(r){return r.id===runId;});if(body&&run)body.innerHTML=run.shooterIds.map(function(id){return buildShooterCard(run,id);}).join('');masterReset();masterSetup(runId);}
   else{stStopAll();masterStop();var w=document.getElementById('master-timer-wrap');if(w)w.style.display='none';}
 }
-function buildShooterCard(run,shooterId){
+function buildShooterCard(run,shooterId){if(S.cfg.zoneMode)return buildZoneCard(run,shooterId);
   var sh=S.shooters.find(function(s){return s.id===shooterId;});if(!sh)return'';
   if(!run.scores[shooterId])run.scores[shooterId]=blankSc();
   var sc=run.scores[shooterId];var res=calcScore(sc);var cfg=S.cfg;var tid=run.id+'_'+shooterId;
@@ -1864,6 +1951,7 @@ function refreshCard(runId,shooterId){
   var sc=run.scores[shooterId];if(!sc)return;
   var res=calcScore(sc);var cfg=S.cfg;var tid=runId+'_'+shooterId;
   var rfEl=document.getElementById('rf-'+tid);if(rfEl)rfEl.textContent=res.total;
+  if(cfg.zoneMode&&sc.zones){var zEl=document.getElementById('zsum-'+tid);if(zEl){zEl.innerHTML=cfg.targets.map(function(tgt,i){var shots=sc.zones[i]||[];var badges=shots.map(function(k){var z=cfg.zoneDef&&cfg.zoneDef.find(function(zd){return zd.key===k;});var col=z?z.color:'#555';return'<span class="ze-badge" style="background:'+col+';width:22px;height:22px;font-size:11px;">'+k+'</span>';}).join('');var pts=res.tPts[i]||0;var ptsCol=pts>=0?'var(--green)':'var(--red)';return'<div class="zone-sum-row">'+'<span class="zone-sum-lbl">'+esc(tgt.label)+'</span>'+'<span class="zone-sum-shots">'+(badges||'<span class="zone-sum-empty">—</span>')+'</span>'+'<span class="zone-sum-pts" style="color:'+ptsCol+'">'+(pts>0?'+':'')+pts+'</span>'+'</div>';}).join('');}var bd=document.getElementById('bd-'+tid);if(bd){var pills2=res.tPts.map(function(p,i){return'<span class="pill p-'+(p>=0?'green':'red')+'">'+esc(cfg.targets[i].label)+': '+(p>0?'+':'')+p+'</span>';}).join('');var tpill2=res.timeMod>0?'<span class="pill p-blue">Time +'+res.timeMod+'</span>':res.timeMod<0?'<span class="pill p-red">Time '+res.timeMod+'</span>':'<span class="pill p-muted">No time mod</span>';bd.innerHTML=pills2+tpill2;}return;}
   cfg.targets.forEach(function(_,i){
     var h=sc.hits[i]||0,m=sc.misses[i]||0;var locked=scLocked(sc,i);var adv=h>=cfg.advance;
     var hEl=document.getElementById('hv-'+tid+'-'+i);if(hEl)hEl.textContent=h;
@@ -2835,8 +2923,159 @@ var GIFT_CODES = [
   'DDG-BORE-4138','DDG-FIRE-7601','DDG-CASE-2894','DDG-SHOT-5367','DDG-MILL-8420',
   'DDG-DROP-1693','DDG-LOAD-4076','DDG-MARK-9531','DDG-WIND-3248','DDG-LAND-6705'
 ];
-var FREE_PRESETS = ['fp_steel_roundabout','fp_el_presidente','fp_prs_field'];
+var FREE_PRESETS = ['fp_steel_roundabout','fp_el_presidente','fp_prs_field','fp_bill_drill'];
 var FREE_RUN_LIMIT = 10;
+
+
+// ═══════════════════════════════════════════════════════════
+// ZONE SCORING — RO zone entry and zone-mode card
+// ═══════════════════════════════════════════════════════════
+var _ZE={runId:null,shooterId:null,tgtIdx:0,scratch:[]};
+
+function buildZoneCard(run,shooterId){
+  var sh=S.shooters.find(function(s){return s.id===shooterId;});if(!sh)return'';
+  if(!run.scores[shooterId])run.scores[shooterId]=blankSc();
+  var sc=run.scores[shooterId];var res=calcScore(sc);var cfg=S.cfg;var tid=run.id+'_'+shooterId;
+  var bst=bestRun(shooterId);var isBest=bst&&bst.run.id===run.id&&res.total>0&&bst.total===res.total;
+  // Zone summary rows
+  var zoneSumHtml='<div class="zone-sum" id="zsum-'+tid+'">'+cfg.targets.map(function(tgt,i){
+    var shots=sc.zones&&sc.zones[i]||[];
+    var badges=shots.map(function(k){
+      var z=cfg.zoneDef&&cfg.zoneDef.find(function(zd){return zd.key===k;});
+      var col=z?z.color:'#555';
+      return'<span class="ze-badge" style="background:'+col+';width:22px;height:22px;font-size:11px;">'+k+'</span>';
+    }).join('');
+    var pts=res.tPts[i]||0;var ptsCol=pts>=0?'var(--green)':'var(--red)';
+    return'<div class="zone-sum-row">'
+      +'<span class="zone-sum-lbl">'+esc(tgt.label)+'</span>'
+      +'<span class="zone-sum-shots">'+(badges||'<span class="zone-sum-empty">—</span>')+'</span>'
+      +'<span class="zone-sum-pts" style="color:'+ptsCol+'">'+(pts>0?'+':'')+pts+'</span>'
+      +'</div>';
+  }).join('')+'</div>';
+  var scoreBtn='<button class="zone-score-btn" onclick="openZoneEntry(\''+run.id+'\',\''+shooterId+'\')">Score Zones</button>';
+  // Shot timer
+  var rt2=run.type||(run.shooterIds.length===1?'solo':'h2h');
+  var showShotTimer=(rt2==='solo')||(rt2==='h2h'&&run.h2hMode!=='sim');
+  var gateInitiallyLocked=showShotTimer&&sc.time===0&&_ST.elapsed===0&&!(_ST.running&&_ST.runId===run.id&&_ST.shooterId===shooterId);
+  var shotTimerHtml='';
+  if(showShotTimer){
+    var curRecTxt=sc.time>0?'✓ '+sc.time+'s':'';var soundOn=(_ST.soundOn!==false);
+    shotTimerHtml=''
+      +'<div class="shot-timer-wrap phase-idle" id="stw-'+tid+'">'
+      +'<div class="shot-timer-hdr"><div class="shot-timer-hdr-left">'
+      +'<span class="shot-timer-lbl">⏱ Shot Timer</span>'
+      +'<button class="sht-icon-btn'+(soundOn?' on':'')+'" id="sht-snd-'+tid+'" onclick="stToggleSound(\''+tid+'\')">'+(soundOn?'🔔':'🔕')+'</button>'
+      +'<button class="sht-icon-btn" id="sht-mic-'+tid+'" onclick="stToggleMic(\''+run.id+'\',\''+shooterId+'\')">🎙</button>'
+      +'</div><div class="sht-recorded'+(sc.time>0?' show':'')+'" id="sht-rec-'+tid+'">'+curRecTxt+'</div></div>'
+      +'<div class="sht-settings-row"><span class="sht-settings-lbl">Random delay</span><div class="sht-delay-inputs">'
+      +'<input class="sht-delay-inp" type="number" min="0.5" max="5" step="0.5" value="1" id="sht-dmin-'+tid+'"> s — '
+      +'<input class="sht-delay-inp" type="number" min="1" max="10" step="0.5" value="4" id="sht-dmax-'+tid+'"> s</div></div>'
+      +'<div class="sht-mic-row" id="sht-mic-row-'+tid+'" style="display:none"><span class="sht-settings-lbl">Sensitivity</span>'
+      +'<input class="sht-sens-range" type="range" min="20" max="220" value="80" oninput="stSensChange(\''+tid+'\',this.value)" id="sht-sens-'+tid+'">'
+      +'<span class="sht-sens-val" id="sht-sens-val-'+tid+'">80</span></div>'
+      +'<div class="shot-timer-display"><div class="shot-timer-clock idle" id="sht-clock-'+tid+'">0.00s</div>'
+      +'<div class="shot-timer-status" id="sht-status-'+tid+'">TAP MAKE READY</div></div>'
+      +'<div class="shot-timer-bar-bg"><div class="shot-timer-bar-fill" id="sht-bar-'+tid+'"></div></div>'
+      +'<div class="sht-splits" id="sht-splits-'+tid+'"></div>'
+      +'<div class="shot-timer-btns">'
+      +'<button class="sht-btn make-ready" id="sht-ready-'+tid+'" onclick="stMakeReady(\''+run.id+'\',\''+shooterId+'\')">&#9654; MAKE READY</button>'
+      +'<button class="sht-btn stop-s" id="sht-stop-'+tid+'" style="display:none" onclick="stStop(\''+run.id+'\',\''+shooterId+'\')">&#9646; STOP</button>'
+      +'<button class="sht-btn record-s" id="sht-rec-btn-'+tid+'" style="display:none" onclick="stRecordTime(\''+run.id+'\',\''+shooterId+'\')">&#10003; SAVE TIME</button>'
+      +'<button class="sht-btn reset-s" onclick="stReset(\''+run.id+'\',\''+shooterId+'\')">&#8635; Reset</button>'
+      +'</div>'
+      +'<div class="sht-vol-warn">📢 Set phone volume to MAX — buzzer must be audible through ear protection.</div>'
+      +'</div>';
+  }
+  var bodyHtml=showShotTimer
+    ?'<div class="score-gate'+(gateInitiallyLocked?' locked':'')+'" id="sg-'+tid+'">'
+      +'<div class="score-gate-overlay"><div class="sg-lock-icon">🔒</div><div class="sg-lock-txt">Start Timer to Score</div><div class="sg-lock-sub">Tap ▶ Start on the Shot Timer</div></div>'
+      +zoneSumHtml+scoreBtn+'</div>'
+    :zoneSumHtml+scoreBtn;
+  var timeMax=cfg.timelimiton&&cfg.timelimit>0?cfg.timelimit*2:99999;
+  var pills=res.tPts.map(function(p,i){return'<span class="pill p-'+(p>=0?'green':'red')+'">'+esc(cfg.targets[i].label)+': '+(p>0?'+':'')+p+'</span>';}).join('');
+  var tpill=res.timeMod>0?'<span class="pill p-blue">Time +'+res.timeMod+'</span>':res.timeMod<0?'<span class="pill p-red">Time '+res.timeMod+'</span>':'<span class="pill p-muted">No time mod</span>';
+  return'<div class="run-card" id="rc-'+tid+'">'
+    +'<div class="run-hdr"><div><div class="run-name">'+esc(sh.name)+'</div>'+(isBest?'<span style="font-size:11px;color:var(--accent);font-family:var(--fh);">★ Best run</span>':'')+'</div>'
+    +'<div style="display:flex;align-items:center;gap:8px;">'
+    +'<button class="btn-reset-run" onclick="stResetRun(\''+run.id+'\',\''+shooterId+'\')" title="Reset all scores">&#8635; Reset Run</button>'
+    +'<div style="text-align:right;"><div class="run-total-lbl">This run</div><div class="run-final" id="rf-'+tid+'">'+res.total+'</div></div>'
+    +'</div></div>'
+    +shotTimerHtml+bodyHtml
+    +'<div class="sh-timer-strip"><div class="sh-timer-disp" id="sh-tmr-'+tid+'">0.0s</div><div class="sh-bar-bg"><div class="sh-bar-fill" id="sh-bar-'+tid+'"></div></div><span class="sh-stamp-lbl" id="sh-lbl-'+tid+'">not recorded</span></div>'
+    +'<div class="time-row"><div><div class="lbl" style="margin-bottom:4px;">Recorded time (sec)</div>'
+    +'<input class="num-inp" type="number" min="0" max="'+timeMax+'" value="'+sc.time+'" oninput="setRunTime(\''+run.id+'\',\''+shooterId+'\',this.value)" id="ti-'+tid+'" style="width:78px;"></div>'
+    +'<div class="breakdown" id="bd-'+tid+'">'+pills+tpill+'</div></div>'
+    +'</div>';
+}
+
+function openZoneEntry(runId,shooterId){
+  var run=S.runs.find(function(r){return r.id===runId;});if(!run)return;
+  if(!run.scores[shooterId])run.scores[shooterId]=blankSc();
+  var sc=run.scores[shooterId];var cfg=S.cfg;
+  _ZE={runId:runId,shooterId:shooterId,tgtIdx:0,
+    scratch:cfg.targets.map(function(_,i){return sc.zones&&sc.zones[i]?sc.zones[i].slice():[];})};
+  for(var i=0;i<cfg.targets.length;i++){if(_ZE.scratch[i].length<(cfg.targets[i].shots||1)){_ZE.tgtIdx=i;break;}}
+  _zeRender();
+  var ov=document.getElementById('zone-entry-overlay');if(ov)ov.classList.add('open');
+}
+
+function _zeRender(){
+  var cfg=S.cfg;var tgt=cfg.targets[_ZE.tgtIdx];var shotsNeeded=tgt.shots||1;
+  var shotsDone=_ZE.scratch[_ZE.tgtIdx].length;
+  var allDone=_ZE.scratch.every(function(s,i){return s.length>=(cfg.targets[i].shots||1);});
+  var nameEl=document.getElementById('ze-tgt-name');if(nameEl)nameEl.textContent=tgt.label;
+  var subEl=document.getElementById('ze-tgt-sub');if(subEl)subEl.textContent='Target '+(_ZE.tgtIdx+1)+' of '+cfg.targets.length;
+  var ctrEl=document.getElementById('ze-shot-ctr');if(ctrEl)ctrEl.textContent='Shot '+(shotsDone+1)+' of '+shotsNeeded;
+  var badgeEl=document.getElementById('ze-badges');
+  if(badgeEl)badgeEl.innerHTML=_ZE.scratch[_ZE.tgtIdx].map(function(k){
+    var z=cfg.zoneDef&&cfg.zoneDef.find(function(zd){return zd.key===k;});var col=z?z.color:'#555';
+    return'<span class="ze-badge" style="background:'+col+'">'+k+'</span>';}).join('');
+  var progEl=document.getElementById('ze-progress');
+  if(progEl)progEl.innerHTML=cfg.targets.map(function(t,i){
+    var done=_ZE.scratch[i].length>=(t.shots||1);var active=i===_ZE.tgtIdx;
+    return'<div class="ze-prog-dot'+(done?' done':active?' active':'')+'"></div>';}).join('');
+  var gridEl=document.getElementById('ze-grid');
+  if(gridEl&&cfg.zoneDef){
+    var full=shotsDone>=shotsNeeded;
+    gridEl.innerHTML=cfg.zoneDef.map(function(z){
+      var ptsTxt=(z.pts>=0?'+':'')+z.pts+' pts';
+      return'<button class="ze-btn" style="background:'+z.color+(full?';opacity:.4':'')+';" onclick="zeAdd(\''+z.key+'\')"'+(full?' disabled':'')+' ontouchstart="">'
+        +'<span class="ze-btn-key">'+z.key+'</span>'
+        +'<span class="ze-btn-name">'+z.label+'</span>'
+        +'<span class="ze-btn-pts">'+ptsTxt+'</span>'
+        +'</button>';}).join('');}
+  var undoEl=document.getElementById('ze-undo');
+  if(undoEl)undoEl.disabled=(_ZE.scratch[_ZE.tgtIdx].length===0&&_ZE.tgtIdx===0);
+  var saveEl=document.getElementById('ze-save');if(saveEl)saveEl.style.display=allDone?'':'none';
+}
+
+function zeAdd(zKey){
+  var cfg=S.cfg;var tgt=cfg.targets[_ZE.tgtIdx];var shotsNeeded=tgt.shots||1;
+  if(_ZE.scratch[_ZE.tgtIdx].length>=shotsNeeded)return;
+  _ZE.scratch[_ZE.tgtIdx].push(zKey);haptic('hit');
+  if(_ZE.scratch[_ZE.tgtIdx].length>=shotsNeeded&&_ZE.tgtIdx<cfg.targets.length-1){
+    haptic('advance');setTimeout(function(){_ZE.tgtIdx++;_zeRender();},180);
+  } else {_zeRender();}
+}
+
+function zeUndo(){
+  if(_ZE.scratch[_ZE.tgtIdx].length>0){_ZE.scratch[_ZE.tgtIdx].pop();}
+  else if(_ZE.tgtIdx>0){_ZE.tgtIdx--;_ZE.scratch[_ZE.tgtIdx].pop();}
+  _zeRender();
+}
+
+function zeSave(){
+  var run=S.runs.find(function(r){return r.id===_ZE.runId;});if(!run)return;
+  if(!run.scores[_ZE.shooterId])run.scores[_ZE.shooterId]=blankSc();
+  var sc=run.scores[_ZE.shooterId];
+  sc.zones=_ZE.scratch.map(function(s){return s.slice();});
+  S.cfg.targets.forEach(function(_,i){sc.hits[i]=sc.zones[i].length;});
+  persist();zeClose();refreshCard(_ZE.runId,_ZE.shooterId);toast('Zones saved!');
+}
+
+function zeClose(){
+  var ov=document.getElementById('zone-entry-overlay');if(ov)ov.classList.remove('open');
+}
 
 function isPro(){
   try{return !!localStorage.getItem('dd_pro');}catch(e){return false;}
@@ -2920,6 +3159,7 @@ function renderFactoryPresets(){
     var tl=p.cfg.timelimiton?p.cfg.timelimit+'s':'No limit';
     var adv=p.cfg.advance+' hit'+(p.cfg.advance!==1?'s':'');
     var miss=p.cfg.misspenalty?'-'+p.cfg.missval+' pts/miss':'No penalty';
+    var totalShots=p.cfg.zoneMode?p.cfg.targets.reduce(function(s,t){return s+(t.shots||1);},0):null;
     var lockOverlay=!unlocked?'<div class="fp-lock-overlay" onclick="openUnlockModal()"><div class="fp-lock-inner"><div class="fp-lock-icon">\uD83D\uDD12</div><div class="fp-lock-txt">Pro — Tap to Unlock</div></div></div>':'';
     var proBadge=!unlocked?'<span class="pro-badge">PRO</span>':'';
     return'<div class="fp-card'+(unlocked?'':' locked-preset')+'">'
@@ -2928,9 +3168,9 @@ function renderFactoryPresets(){
       +'<div class="fp-desc">'+esc(p.desc)+'</div>'
       +'<div class="fp-stats">'
       +'<div class="fp-stat">Targets: <span>'+tgts+'</span></div>'
-      +'<div class="fp-stat">Advance: <span>'+adv+'</span></div>'
-      +'<div class="fp-stat">Time: <span>'+tl+'</span></div>'
-      +'<div class="fp-stat">Miss: <span>'+miss+'</span></div>'
+      +(p.cfg.zoneMode?'<div class="fp-stat">Shots: <span>'+totalShots+'</span></div>':'<div class="fp-stat">Advance: <span>'+adv+'</span></div>')
+      +'<div class="fp-stat">Par: <span>'+tl+'</span></div>'
+      +(p.cfg.zoneMode?'<div class="fp-stat">Zones: <span>A / C / D / Miss</span></div>':'<div class="fp-stat">Miss: <span>'+miss+'</span></div>')
       +'</div>'
       +'<div class="fp-actions">'
       +'<button class="btn btn-primary btn-sm" onclick="loadFactoryPreset(\''+p.id+'\')">Load</button>'
@@ -3379,6 +3619,28 @@ if(document.readyState==='loading'){
     </div>
   </div>
 </div>
+
+<!-- ── ZONE ENTRY OVERLAY ─────────────────────────────── -->
+<div id="zone-entry-overlay">
+  <div class="ze-hdr">
+    <div class="ze-hdr-left">
+      <div class="ze-tgt-name" id="ze-tgt-name">T1</div>
+      <div class="ze-tgt-sub" id="ze-tgt-sub">Target 1 of 1</div>
+    </div>
+    <div class="ze-hdr-right">
+      <div class="ze-shot-ctr" id="ze-shot-ctr">Shot 1 of 6</div>
+      <div class="ze-badges" id="ze-badges"></div>
+    </div>
+    <button class="ze-close" onclick="zeClose()">&#x2715;</button>
+  </div>
+  <div class="ze-progress" id="ze-progress"></div>
+  <div class="ze-grid" id="ze-grid"></div>
+  <div class="ze-foot">
+    <button class="ze-undo" id="ze-undo" onclick="zeUndo()">&#8617; Undo</button>
+    <button class="ze-save" id="ze-save" onclick="zeSave()" style="display:none">&#10003; Save Scores</button>
+  </div>
+</div>
+
 
 </body>
 </html>
