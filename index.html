@@ -1170,6 +1170,7 @@ body.light #install-splash{background:#0c0e15;background-image:radial-gradient(c
       <div class="sec-title">Results — Leaderboard</div>
       <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
         <button class="btn btn-green btn-sm" onclick="openSaveMatchModal()">&#128190; Save Match</button>
+        <button class="btn btn-ghost btn-sm" onclick="exportMatchCSV()">&#8595; Export CSV</button>
         <button class="btn btn-ghost btn-sm" onclick="openUnlockModal()" id="btn-lb-pro" style="display:none;">Unlock Pro</button>
       </div>
     </div>
@@ -1192,6 +1193,9 @@ body.light #install-splash{background:#0c0e15;background-image:radial-gradient(c
       <div id="hist-match-list"></div>
     </div>
     <div id="htab-progress" style="display:none">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:10px;">
+        <button class="btn btn-ghost btn-sm" onclick="exportProgressCSV()">&#8595; Export CSV</button>
+      </div>
       <div id="hist-progress-list"></div>
     </div>
   </div>
@@ -1798,7 +1802,8 @@ function confirmNewRun(goToScore){
   var runId='run_'+Date.now(),scores={};
   _pickerSel.forEach(function(id){scores[id]=blankSc();});
   var nextNum=S.runs.reduce(function(mx,r){return r.num>mx?r.num:mx;},0)+1;
-  var newRun={id:runId,num:nextNum,type:_nrmType,shooterIds:_pickerSel.slice(),scores:scores};
+  var orderedIds=_pickerSel.slice().sort(function(a,b){return S.shooters.findIndex(function(s){return s.id===a;})-S.shooters.findIndex(function(s){return s.id===b;});});
+  var newRun={id:runId,num:nextNum,type:_nrmType,shooterIds:orderedIds,scores:scores};
   if(_nrmType==='h2h')newRun.h2hMode=_nrmH2HMode;
   if(_nrmType==='team'){var tn=document.getElementById('team-name-inp');newRun.teamName=tn?tn.value.trim():'';}
   S.runs.push(newRun);S.locked=true;persist();
@@ -3608,6 +3613,48 @@ if(document.readyState==='loading'){
   document.addEventListener('DOMContentLoaded',_ddInit);
 }else{
   _ddInit();
+}
+
+// ═══════════════════════════════════════════════════════════
+// CSV EXPORT
+// ═══════════════════════════════════════════════════════════
+function _csvEscape(v){var s=String(v==null?'':v);return(s.indexOf(',')!==-1||s.indexOf('"')!==-1||s.indexOf('\n')!==-1)?'"'+s.replace(/"/g,'""')+'"':s;}
+function downloadCSV(filename,rows){
+  var csv=rows.map(function(r){return r.map(_csvEscape).join(',');}).join('\r\n');
+  var blob=new Blob([csv],{type:'text/csv'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');a.href=url;a.download=filename;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+function exportMatchCSV(){
+  var cfg=S.cfg;
+  if(!S.shooters.length){toast('No shooters to export');return;}
+  var rows=S.shooters.map(function(sh){var b=bestRun(sh.id);var rc=runCount(sh.id);var total=b?b.total:0;var tPts=b?calcScore(b.sc).tPts:cfg.targets.map(function(){return 0;});var t=b&&b.sc?b.sc.time:0;return{name:sh.name,total:total,tPts:tPts,rc:rc,t:t};}).sort(function(a,b){return b.total-a.total;});
+  var header=['Rank','Shooter'].concat(cfg.targets.map(function(t){return t.label;})).concat(['Time (s)','Runs','Best Score']);
+  var data=[header].concat(rows.map(function(r,i){return[i+1,r.name].concat(r.tPts).concat([r.t>0?r.t:'',r.rc,r.total]);}));
+  var matchSlug=(cfg.matchname||'match').replace(/[^a-z0-9]/gi,'-').toLowerCase();
+  downloadCSV(matchSlug+'-'+new Date().toISOString().slice(0,10)+'.csv',data);
+  toast('Match results exported');
+}
+function exportProgressCSV(){
+  if(!isPro()){openUnlockModal();return;}
+  var list=histLoad();
+  if(!list.length){toast('No match history to export');return;}
+  var shooterMap={};
+  list.forEach(function(rec){(rec.leaderboard||[]).forEach(function(r){if(!shooterMap[r.name])shooterMap[r.name]={name:r.name,scores:[],times:[],bestScore:0,bestTime:0,totalRuns:0,matches:0};shooterMap[r.name].scores.push(r.bestScore);if(r.bestScore>shooterMap[r.name].bestScore)shooterMap[r.name].bestScore=r.bestScore;if(r.time&&r.time>0){shooterMap[r.name].times.push(r.time);if(!shooterMap[r.name].bestTime||r.time<shooterMap[r.name].bestTime)shooterMap[r.name].bestTime=r.time;}shooterMap[r.name].totalRuns+=r.runs;shooterMap[r.name].matches++;});});
+  var shooters=Object.values(shooterMap).sort(function(a,b){return b.bestScore-a.bestScore;});
+  var header=['Shooter','Best Score','Avg Score','Matches','Total Runs','Best Time (s)','Avg Time (s)','Score Trend','Time Trend'];
+  var data=[header].concat(shooters.map(function(sh){
+    var avg=sh.scores.length?Math.round(sh.scores.reduce(function(a,b){return a+b;},0)/sh.scores.length):0;
+    var scoreTrend=sh.scores.length>=2?(sh.scores[0]>sh.scores[sh.scores.length-1]?'Improving':sh.scores[0]<sh.scores[sh.scores.length-1]?'Declining':'Steady'):'N/A';
+    var hasTimes=sh.times.length>0;
+    var avgTime=hasTimes?(sh.times.reduce(function(a,b){return a+b;},0)/sh.times.length).toFixed(2):'';
+    var timeTrend=sh.times.length>=2?(sh.times[0]<sh.times[sh.times.length-1]?'Faster':sh.times[0]>sh.times[sh.times.length-1]?'Slower':'Steady'):'N/A';
+    return[sh.name,sh.bestScore,avg,sh.matches,sh.totalRuns,sh.bestTime>0?sh.bestTime.toFixed(2):'',avgTime,scoreTrend,timeTrend];
+  }));
+  downloadCSV('progress-tracker-'+new Date().toISOString().slice(0,10)+'.csv',data);
+  toast('Progress tracker exported');
 }
 </script>
 <!-- PRO UNLOCK MODAL -->

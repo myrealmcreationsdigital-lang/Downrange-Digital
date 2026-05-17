@@ -9,7 +9,7 @@
   - Offline: serve cached version seamlessly — no network needed at the range
 */
 
-const CACHE_NAME = 'dd-v2-5-5';
+const CACHE_NAME = 'dd-v2-5-6';
 const CACHE_URLS = [
   './',
   './index.html',
