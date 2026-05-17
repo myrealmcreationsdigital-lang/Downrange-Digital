@@ -84,10 +84,33 @@ body{background:var(--bg);color:var(--text);font-family:var(--fb);min-height:100
 .ico{width:28px;height:28px;padding:0;display:flex;align-items:center;justify-content:center;font-size:14px;border-radius:5px;background:var(--bg3);border:1px solid var(--border);cursor:pointer;color:var(--text);transition:all .15s;font-family:var(--fh);font-weight:700;}
 .ico:hover{border-color:var(--accent);color:var(--accent);}
 .ico-sm{width:24px;height:24px;font-size:12px;}
-.tabs{display:flex;gap:2px;margin-bottom:20px;border-bottom:1px solid var(--border);overflow-x:auto;background:var(--bg2);padding:0 4px;}
-.tab{font-family:var(--fh);font-weight:700;font-size:12px;letter-spacing:.07em;text-transform:uppercase;padding:9px 14px 10px;cursor:pointer;border-bottom:2px solid transparent;color:var(--muted);transition:all .15s;background:none;border-top:none;border-left:none;border-right:none;white-space:nowrap;}
-.tab.active{color:var(--accent2);border-bottom-color:var(--accent);}
-.tab:hover:not(.active){color:var(--text);}
+/* ── Bottom Navigation Bar ── */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:200;height:62px;background:var(--bg2);border-top:1px solid var(--border2);display:flex;align-items:stretch;box-shadow:0 -2px 20px rgba(0,0,0,.45);}
+.bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:none;border:none;color:var(--muted);cursor:pointer;font-family:var(--fh);font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:8px 4px;-webkit-tap-highlight-color:transparent;transition:color .15s;position:relative;}
+.bnav-item svg{width:22px;height:22px;}
+.bnav-item.active{color:var(--accent);}
+.bnav-item:hover:not(.active){color:var(--text);}
+.bnav-item.active::after{content:'';position:absolute;top:0;left:20%;right:20%;height:2px;background:var(--accent);border-radius:0 0 2px 2px;}
+/* ── Match Step Pills ── */
+.match-steps{display:flex;gap:4px;margin-bottom:16px;overflow-x:auto;padding:2px 0 6px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.match-steps::-webkit-scrollbar{display:none;}
+.mstep{font-family:var(--fh);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:6px 13px;cursor:pointer;border-radius:20px;border:1px solid var(--border);color:var(--muted);background:var(--bg3);white-space:nowrap;-webkit-tap-highlight-color:transparent;transition:all .15s;}
+.mstep.active{color:var(--accent2);background:rgba(232,160,32,.1);border-color:var(--accent);}
+.mstep:hover:not(.active){color:var(--text);}
+/* ── Profile Cards ── */
+.prof-gate{background:rgba(232,160,32,.07);border:1px solid rgba(232,160,32,.3);border-radius:9px;padding:22px 18px;text-align:center;}
+.prof-empty{text-align:center;padding:48px 20px;color:var(--muted);}
+.prof-empty-icon{font-size:38px;margin-bottom:12px;}
+.prof-empty-msg{font-size:14px;line-height:1.7;}
+.prof-card{background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:13px 14px;margin-bottom:10px;display:flex;align-items:center;gap:12px;transition:border-color .15s;}
+.prof-card:hover{border-color:var(--border2);}
+.prof-avatar{width:42px;height:42px;border-radius:50%;background:rgba(232,160,32,.12);border:1.5px solid rgba(232,160,32,.28);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:var(--fh);font-size:14px;font-weight:700;color:var(--accent);text-transform:uppercase;}
+.prof-body{flex:1;min-width:0;}
+.prof-name{font-family:var(--fh);font-size:15px;font-weight:700;color:var(--text);}
+.prof-meta{font-size:12px;color:var(--muted);margin-top:2px;}
+.prof-stats{font-size:12px;color:var(--muted);margin-top:2px;}
+.prof-hand-btn{flex:1;transition:all .15s;}
+.prof-hand-btn.selected{border-color:var(--accent)!important;color:var(--accent)!important;}
 .sec-title{font-family:var(--fh);font-weight:700;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8a94b0;margin-bottom:10px;}
 .sec-title-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
 .sec-title-row .sec-title{margin-bottom:0;}
@@ -1036,15 +1059,14 @@ body.light #install-splash{background:#0c0e15;background-image:radial-gradient(c
       <span class="hdr-pro-chip" id="hdr-pro-chip" style="display:none;">PRO</span>
     </div>
   </div>
-  <div class="tabs">
-    <button class="tab active" onclick="showTab('shooters')">Shooters</button>
-    <button class="tab" onclick="showTab('presets')">Presets</button>
-    <button class="tab" onclick="showTab('rules')">Rules</button>
-    <button class="tab" onclick="showTab('pairings')">Runs</button>
-    <button class="tab" onclick="showTab('score')">Score Entry</button>
-    <button class="tab" onclick="showTab('lb')">Leaderboard</button>
-    <button class="tab" onclick="showTab('history')">History</button>
-    <button class="tab" onclick="showTab('about')">About</button>
+  <div id="section-match">
+  <div class="match-steps">
+    <button class="mstep active" id="mstep-shooters" onclick="showTab('shooters')">Shooters</button>
+    <button class="mstep" id="mstep-presets" onclick="showTab('presets')">Presets</button>
+    <button class="mstep" id="mstep-rules" onclick="showTab('rules')">Rules</button>
+    <button class="mstep" id="mstep-pairings" onclick="showTab('pairings')">Runs</button>
+    <button class="mstep" id="mstep-score" onclick="showTab('score')">Score</button>
+    <button class="mstep" id="mstep-lb" onclick="showTab('lb')">Results</button>
   </div>
   <div id="tab-shooters">
     <div class="sec-title-row">
@@ -1184,7 +1206,18 @@ body.light #install-splash{background:#0c0e15;background-image:radial-gradient(c
       </div>
     </div>
   </div>
-  <div id="tab-history" style="display:none">
+  </div><!-- /section-match -->
+
+  <div id="section-profiles" style="display:none">
+    <div class="sec-title-row" style="margin-bottom:14px;">
+      <div class="sec-title">Shooter Profiles</div>
+      <button class="btn btn-primary btn-sm" onclick="openNewProfileModal()">+ New Profile</button>
+    </div>
+    <div id="profiles-content"></div>
+  </div>
+
+  <div id="section-history" style="display:none">
+    <div id="tab-history">
     <div class="hist-subtabs">
       <button class="htab active" id="htab-btn-matches" onclick="showHistoryTab('matches')">Match History</button>
       <button class="htab" id="htab-btn-progress" onclick="showHistoryTab('progress')">Progress Tracker</button>
@@ -1198,8 +1231,11 @@ body.light #install-splash{background:#0c0e15;background-image:radial-gradient(c
       </div>
       <div id="hist-progress-list"></div>
     </div>
+    </div>
   </div>
-  <div id="tab-about" style="display:none">
+
+  <div id="section-more" style="display:none">
+  <div id="tab-about">
 
     <!-- HERO CARD -->
     <div class="about-card" style="text-align:center;padding:28px 20px 22px;">
@@ -1237,6 +1273,54 @@ body.light #install-splash{background:#0c0e15;background-image:radial-gradient(c
     </div>
 
     <div style="height:16px;"></div>
+  </div>
+  </div><!-- /section-more -->
+
+  <nav class="bottom-nav">
+    <button class="bnav-item active" id="bnav-match" onclick="showSection('match')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="3" x2="12" y2="8"/><line x1="12" y1="16" x2="12" y2="21"/><line x1="3" y1="12" x2="8" y2="12"/><line x1="16" y1="12" x2="21" y2="12"/></svg>
+      <span>Match</span>
+    </button>
+    <button class="bnav-item" id="bnav-profiles" onclick="showSection('profiles')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      <span>Profiles</span>
+    </button>
+    <button class="bnav-item" id="bnav-history" onclick="showSection('history')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      <span>History</span>
+    </button>
+    <button class="bnav-item" id="bnav-more" onclick="showSection('more')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+      <span>More</span>
+    </button>
+  </nav>
+</div>
+<div class="modal-overlay" id="new-profile-modal">
+  <div class="modal" style="max-width:380px;">
+    <div class="modal-title" id="prof-modal-title">New Profile</div>
+    <div class="lbl" style="margin-bottom:4px;">Name</div>
+    <input type="text" class="txt-inp full" id="prof-name-inp" placeholder="Shooter name" maxlength="40" oninput="document.getElementById('prof-modal-warn').style.display='none'">
+    <div class="lbl" style="margin-top:12px;margin-bottom:4px;">Division <span style="color:var(--muted);font-weight:400;">(optional)</span></div>
+    <select class="txt-inp full" id="prof-div-inp" style="padding:7px 10px;cursor:pointer;">
+      <option value="">— Not specified —</option>
+      <option>Open</option><option>Limited</option><option>Limited Optics</option>
+      <option>Production</option><option>Carry Optics</option><option>Single Stack</option>
+      <option>Revolver</option><option>PCC</option><option>Steel Challenge</option>
+      <option>Rimfire Pistol</option><option>Rimfire Rifle</option>
+    </select>
+    <div class="lbl" style="margin-top:12px;margin-bottom:6px;">Dominant Hand <span style="color:var(--muted);font-weight:400;">(optional)</span></div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-ghost btn-sm prof-hand-btn" id="prof-hand-right" onclick="profSetHand('right')" style="flex:1;">Right</button>
+      <button class="btn btn-ghost btn-sm prof-hand-btn" id="prof-hand-left" onclick="profSetHand('left')" style="flex:1;">Left</button>
+    </div>
+    <div id="prof-modal-warn" style="font-size:12px;color:var(--red);margin-top:8px;display:none;"></div>
+    <div id="prof-delete-wrap" style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);">
+      <button class="btn btn-danger btn-sm" style="width:100%;" onclick="confirmDeleteProfile()">Delete Profile</button>
+    </div>
+    <div class="modal-actions" style="margin-top:16px;">
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('new-profile-modal')">Cancel</button>
+      <button class="btn btn-primary btn-sm" onclick="confirmSaveProfile()">Save Profile</button>
+    </div>
   </div>
 </div>
 <div class="modal-overlay" id="help-modal">
@@ -1407,13 +1491,22 @@ function blankSc(){var n=S.cfg.targets.length;var sc={hits:new Array(n).fill(0),
 function haptic(type){if(!S.cfg.haptic||!navigator.vibrate)return;if(type==='hit')navigator.vibrate(30);else if(type==='miss')navigator.vibrate([20,30,20]);else if(type==='advance')navigator.vibrate([40,30,40,30,80]);else if(type==='complete')navigator.vibrate([80,40,80]);}
 
 // TABS
+function showSection(s){
+  ['match','profiles','history','more'].forEach(function(n){
+    var el=document.getElementById('section-'+n);if(el)el.style.display=(n===s)?'':'none';
+  });
+  document.querySelectorAll('.bnav-item').forEach(function(el){el.classList.toggle('active',el.id==='bnav-'+s);});
+  if(s==='history')renderHistory();
+  if(s==='profiles')renderProfiles();
+}
 function showTab(t){
-  var names=['shooters','presets','rules','pairings','score','lb','history','about'];
+  var matchSec=document.getElementById('section-match');
+  if(matchSec&&matchSec.style.display==='none')showSection('match');
+  var names=['shooters','presets','rules','pairings','score','lb'];
   names.forEach(function(n){document.getElementById('tab-'+n).style.display=(n===t)?'':'none';});
-  document.querySelectorAll('.tab').forEach(function(el,i){el.classList.toggle('active',names[i]===t);});
+  document.querySelectorAll('.mstep').forEach(function(el,i){el.classList.toggle('active',names[i]===t);});
   if(t==='shooters')renderRoster();if(t==='presets')renderPresets();if(t==='rules')renderRules();
   if(t==='pairings'){renderPairings();renderRunLimitBanner();}if(t==='score')renderScore();if(t==='lb')renderLb();
-  if(t==='history'){renderHistory();}
   if(t!=='score'){masterStop();stStopAll();var w=document.getElementById('master-timer-wrap');if(w)w.style.display='none';}
 }
 
@@ -3613,6 +3706,98 @@ if(document.readyState==='loading'){
   document.addEventListener('DOMContentLoaded',_ddInit);
 }else{
   _ddInit();
+}
+
+// ═══════════════════════════════════════════════════════════
+// SHOOTER PROFILES
+// ═══════════════════════════════════════════════════════════
+function profLoad(){try{return JSON.parse(localStorage.getItem('dd_profiles'))||[];}catch(e){return[];}}
+function profSave(list){try{localStorage.setItem('dd_profiles',JSON.stringify(list));}catch(e){}}
+
+function renderProfiles(){
+  var el=document.getElementById('profiles-content');if(!el)return;
+  if(!isPro()){
+    el.innerHTML='<div class="prof-gate">'
+      +'<div style="font-size:30px;margin-bottom:8px;">🔒</div>'
+      +'<div style="font-family:var(--fh);font-size:15px;font-weight:700;color:var(--accent);margin-bottom:6px;">Shooter Profiles is a Pro Feature</div>'
+      +'<div style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6;">Create permanent profiles for your regular shooters. History builds automatically every match.</div>'
+      +'<button class="btn btn-primary btn-sm" onclick="openUnlockModal()">Unlock Pro</button>'
+      +'</div>';
+    return;
+  }
+  var profiles=profLoad();
+  var history=histLoad();
+  var statsMap={};
+  history.forEach(function(rec){(rec.leaderboard||[]).forEach(function(r){if(!statsMap[r.name])statsMap[r.name]={best:0,matches:0,runs:0};if(r.bestScore>statsMap[r.name].best)statsMap[r.name].best=r.bestScore;statsMap[r.name].matches++;statsMap[r.name].runs+=r.runs;});});
+  if(!profiles.length){
+    el.innerHTML='<div class="prof-empty"><div class="prof-empty-icon">🧑‍🎯</div><div class="prof-empty-msg">No profiles yet.<br>Create profiles for your regular shooters<br>to track their progress automatically.</div></div>';
+    return;
+  }
+  el.innerHTML=profiles.map(function(p){
+    var initials=p.name.trim().split(/\s+/).map(function(w){return w[0]||'';}).join('').slice(0,2).toUpperCase();
+    var stats=statsMap[p.name]||{best:0,matches:0,runs:0};
+    var meta=[p.division,p.hand?(p.hand==='left'?'Left Hand':'Right Hand'):''].filter(Boolean).join(' · ');
+    return'<div class="prof-card">'
+      +'<div class="prof-avatar">'+esc(initials)+'</div>'
+      +'<div class="prof-body">'
+      +'<div class="prof-name">'+esc(p.name)+'</div>'
+      +(meta?'<div class="prof-meta">'+esc(meta)+'</div>':'')
+      +'<div class="prof-stats">Best: '+stats.best+' · '+stats.matches+' match'+(stats.matches!==1?'es':'')+' · '+stats.runs+' run'+(stats.runs!==1?'s':'')+'</div>'
+      +'</div>'
+      +'<button class="btn btn-ghost btn-xs" onclick="openEditProfileModal(\''+p.id+'\')">Edit</button>'
+      +'</div>';
+  }).join('');
+}
+
+var _profHand='',_editingProfId=null;
+function profSetHand(h){
+  _profHand=(_profHand===h)?'':h;
+  ['right','left'].forEach(function(side){
+    var btn=document.getElementById('prof-hand-'+side);
+    if(btn)btn.classList.toggle('selected',_profHand===side);
+  });
+}
+function openNewProfileModal(){
+  _editingProfId=null;_profHand='';
+  var inp=document.getElementById('prof-name-inp');var div=document.getElementById('prof-div-inp');
+  if(inp)inp.value='';if(div)div.value='';
+  document.getElementById('prof-modal-warn').style.display='none';
+  document.getElementById('prof-modal-title').textContent='New Profile';
+  document.getElementById('prof-delete-wrap').style.display='none';
+  ['right','left'].forEach(function(s){var b=document.getElementById('prof-hand-'+s);if(b)b.classList.remove('selected');});
+  openModal('new-profile-modal');setTimeout(function(){if(inp)inp.focus();},120);
+}
+function openEditProfileModal(id){
+  var p=profLoad().find(function(x){return x.id===id;});if(!p)return;
+  _editingProfId=id;_profHand=p.hand||'';
+  var inp=document.getElementById('prof-name-inp');var div=document.getElementById('prof-div-inp');
+  if(inp)inp.value=p.name;if(div)div.value=p.division||'';
+  document.getElementById('prof-modal-warn').style.display='none';
+  document.getElementById('prof-modal-title').textContent='Edit Profile';
+  document.getElementById('prof-delete-wrap').style.display='';
+  ['right','left'].forEach(function(s){var b=document.getElementById('prof-hand-'+s);if(b)b.classList.toggle('selected',_profHand===s);});
+  openModal('new-profile-modal');
+}
+function confirmSaveProfile(){
+  var inp=document.getElementById('prof-name-inp');var div=document.getElementById('prof-div-inp');var warn=document.getElementById('prof-modal-warn');
+  var name=inp?inp.value.trim():'';
+  if(!name){warn.textContent='Name is required.';warn.style.display='';return;}
+  var profiles=profLoad();
+  var dup=profiles.some(function(p){return p.name.toLowerCase()===name.toLowerCase()&&p.id!==_editingProfId;});
+  if(dup){warn.textContent='A profile with that name already exists.';warn.style.display='';return;}
+  if(_editingProfId){
+    var idx=profiles.findIndex(function(p){return p.id===_editingProfId;});
+    if(idx!==-1){profiles[idx].name=name;profiles[idx].division=div?div.value:'';profiles[idx].hand=_profHand;}
+  }else{
+    profiles.push({id:'prof_'+Date.now(),name:name,division:div?div.value:'',hand:_profHand,created:new Date().toISOString()});
+  }
+  profSave(profiles);closeModal('new-profile-modal');renderProfiles();
+  toast(_editingProfId?'Profile updated':'Profile created');
+}
+function confirmDeleteProfile(){
+  if(!_editingProfId)return;
+  var profiles=profLoad().filter(function(p){return p.id!==_editingProfId;});
+  profSave(profiles);closeModal('new-profile-modal');renderProfiles();toast('Profile deleted');
 }
 
 // ═══════════════════════════════════════════════════════════
